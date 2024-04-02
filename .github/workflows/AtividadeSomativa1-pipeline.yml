@@ -1,0 +1,29 @@
+name: AtividadeSomativa1-pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches:  [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+    build-job:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - run: python3 -v
+
+    test-job:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - run: python3 AtividadeSomativa1.py
+
+    deploy-job:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - run: echo "Hello Word! AtividadeSomativa1.py executado com sucesso via pipeline no GitHub Actions by Edson Luiz Machado"
+        
