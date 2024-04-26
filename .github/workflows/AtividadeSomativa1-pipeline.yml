@@ -1,29 +1,38 @@
 name: AtividadeSomativa1-pipeline
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches:  [ "main" ]
+image: python
 
-  workflow_dispatch:
+stages:
+  - build
+  - test
+  - deploy
 
-jobs:
-    build-job:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - run: python3 -v
+# Etapa de build: Copia arquivos de HTML para a pasta de saída
+build_job:
+  stage: build
+  script:
+    - echo "Construindo a aplicação..."
+    - mkdir -p dist
+    - cp index.html dist/  # Copia o arquivo index.html para a pasta dist
+  artifacts:
+    paths:
+      - dist/  # Pasta de saída com os arquivos HTML
 
-    test-job:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - run: python3 AtividadeSomativa1.py
+# Etapa de test: Verifica se o arquivo index.html existe na pasta dist
+test_job:
+  stage: test
+  script:
+    - echo "Verificando a existência do arquivo index.html..."
+    - test -f dist/index.html && echo "Test passed: index.html exists." || echo "Test failed: index.html does not exist."
+  only:
+    - merge_requests  # Executa a etapa de teste apenas em solicitações de mesclagem (MRs)
 
-    deploy-job:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - run: echo "Hello Word! AtividadeSomativa1.py executado com sucesso via pipeline no GitHub Actions by Edson Luiz Machado"
-        
+# Etapa de deploy: Faz o deploy dos arquivos HTML
+deploy_job:
+  stage: deploy
+  script:
+    - echo "Fazendo deploy da aplicação..."
+    # Adicione comandos para fazer o deploy da aplicação, como enviar os arquivos HTML para um servidor
+    - echo "Deploy concluído"
+  only:
+    - master  # Executa a etapa de deploy apenas na branch master
